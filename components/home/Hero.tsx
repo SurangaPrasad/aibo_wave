@@ -1,4 +1,14 @@
-import Image from 'next/image'
+import Carousel from '@/components/Carousel'
+
+const carouselImages = [
+  '/WhatsApp Image 2025-12-20 at 16.29.50 (1).jpeg',
+  '/WhatsApp Image 2025-12-20 at 16.29.50.jpeg',
+  '/WhatsApp Image 2025-12-20 at 16.29.51 (1).jpeg',
+  '/WhatsApp Image 2025-12-20 at 16.29.51 (2).jpeg',
+  '/WhatsApp Image 2025-12-20 at 16.29.51.jpeg',
+  '/WhatsApp Image 2025-12-20 at 16.29.52 (1).jpeg',
+  '/WhatsApp Image 2025-12-20 at 16.29.52.jpeg',
+]
 
 const Hero = () => {
   return (
@@ -24,14 +34,7 @@ const Hero = () => {
           </div>
         </div>
         <div className="flex justify-center items-center">
-          <Image 
-            src="/Artboard 1@2x-8.png" 
-            alt="AIBO Wave Symbol" 
-            width={400} 
-            height={400}
-            priority
-            className="max-w-full h-auto"
-          />
+          <Carousel images={carouselImages} interval={4000} />
         </div>
       </div>
     </section>
