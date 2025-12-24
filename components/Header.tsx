@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -25,24 +24,18 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-8 flex justify-between items-center">
         <Link href="/" className="flex items-center text-2xl font-bold text-black">
           {/* Desktop Logo */}
-          <Image 
-            src="/aibow-logo.png" 
-            alt="AIBO Wave Logo" 
-            width={500} 
-            height={80} 
-            sizes="(max-width: 768px) 0px, 500px"
-            className="-ml-12 hidden md:block"
-            priority
+          <img
+            src="/aibow-logo.png"
+            alt="AIBO Wave Logo"
+            className="-ml-12 hidden md:block w-[600px] h-auto"
+            loading="eager"
           />
           {/* Mobile Logo */}
-          <Image 
-            src="/artboard-logo.png" 
-            alt="AIBO Wave Logo" 
-            width={50} 
-            height={40} 
-            sizes="(max-width: 768px) 150px, 0px"
-            className="md:hidden"
-            priority
+          <img
+            src="/artboard-logo.png"
+            alt="AIBO Wave Logo"
+            className="md:hidden w-[50px] h-auto"
+            loading="eager"
           />
         </Link>
         
