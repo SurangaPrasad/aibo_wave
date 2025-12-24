@@ -30,15 +30,19 @@ const Header = () => {
             alt="AIBO Wave Logo" 
             width={500} 
             height={80} 
-            className="-ml-12 hidden md:block" 
+            sizes="(max-width: 768px) 0px, 500px"
+            className="-ml-12 hidden md:block"
+            priority
           />
           {/* Mobile Logo */}
           <Image 
             src="/artboard-logo.png" 
             alt="AIBO Wave Logo" 
             width={50} 
-            height={30} 
-            className="md:hidden" 
+            height={40} 
+            sizes="(max-width: 768px) 150px, 0px"
+            className="md:hidden"
+            priority
           />
         </Link>
         
