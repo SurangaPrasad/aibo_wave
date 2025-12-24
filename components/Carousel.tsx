@@ -41,6 +41,7 @@ const Carousel = ({ images, interval = 3000 }: CarouselProps) => {
           src={images[currentIndex]}
           alt={`Slide ${currentIndex + 1}`}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
           className="object-cover transition-opacity duration-500"
           priority={currentIndex === 0}
         />

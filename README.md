@@ -73,8 +73,8 @@ npm start
 │   ├── stories.tsx     # Stories page
 │   └── profile.tsx     # Profile page
 ├── public/             # Static assets
-│   ├── AIBOW@2x.png    # Logo with text
-│   └── Artboard 1@2x-8.png # Logo symbol
+│   ├── aibow-logo.png    # Logo with text
+│   └── artboard-logo.png # Logo symbol
 └── styles/             # Global styles
     └── globals.css     # Global CSS
 
