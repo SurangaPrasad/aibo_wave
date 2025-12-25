@@ -64,11 +64,16 @@ export default function SilentEcho() {
                 <strong className="text-foreground">Hosts:</strong> Thilina Weththasinghe (Artist) & Vidura Dias Abayagunawardana (Lyricist)
               </div>
             </div>
-            <Link href="/silent-echo">
-              <Button className="w-full mt-8 bg-accent hover:bg-accent/90">
+            <a
+              href="https://docs.google.com/forms/d/e/1FAIpQLScEvcfe5BNFWVr6vg0ldzbStIkgqnJOrhkrKpQEqSTIzxwMsA/viewform"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block w-full mt-8"
+            >
+              <span className="inline-block w-full bg-accent hover:bg-accent/90 text-white px-4 py-3 rounded-md text-center font-semibold">
                 Learn More
-              </Button>
-            </Link>
+              </span>
+            </a>
           </div>
         </div>
       </div>
