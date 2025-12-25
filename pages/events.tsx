@@ -1,6 +1,10 @@
 import Head from 'next/head'
 import EventsHero from '@/components/events/EventsHero'
-import EmptyState from '@/components/events/EmptyState'
+import QuickFacts from '@/components/events/QuickFacts'
+import DetailedProgram from '@/components/events/DetailedProgram'
+import LogisticsPreparation from '@/components/events/LogisticsPreparation'
+import StaffRoles from '@/components/events/StaffRoles'
+import ContingencyPlans from '@/components/events/ContingencyPlans'
 
 export default function Events() {
   return (
@@ -10,7 +14,11 @@ export default function Events() {
         <meta name="description" content="Discover cultural events on AIBO Wave" />
       </Head>
       <EventsHero />
-      <EmptyState />
+      <QuickFacts />
+      <DetailedProgram />
+      <LogisticsPreparation />
+      <StaffRoles />
+      <ContingencyPlans />
     </>
   )
 }

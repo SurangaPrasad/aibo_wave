@@ -14,8 +14,9 @@ const Header = () => {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '/silent-echo', label: 'Silent Echo' },
+    // { href: '/silent-echo', label: 'Silent Echo' },
     { href: '/societies', label: 'Societies' },
+    { href: '/events', label: 'Events' },
   ]
 
   return (
