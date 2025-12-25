@@ -1,7 +1,10 @@
 import Head from 'next/head'
 import Hero from '@/components/home/Hero'
 import Mission from '@/components/home/Mission'
-import Values from '@/components/home/Values'
+import ThreePillars from '@/components/home/ThreePillars'
+import SilentEcho from '@/components/home/SilentEcho'
+import MemberBenefits from '@/components/home/MemberBenefits'
+import CallToAction from '@/components/home/CallToAction'
 
 export default function Home() {
   return (
@@ -14,7 +17,10 @@ export default function Home() {
       </Head>
       <Hero />
       <Mission />
-      <Values />
+      <ThreePillars />
+      <SilentEcho />
+      <MemberBenefits />
+      <CallToAction />
     </>
   )
 }

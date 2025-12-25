@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { LogIn } from 'lucide-react'
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -13,14 +14,12 @@ const Header = () => {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    { href: '/events', label: 'Events' },
+    { href: '/silent-echo', label: 'Silent Echo' },
     { href: '/societies', label: 'Societies' },
-    { href: '/stories', label: 'Stories' },
-    { href: '/profile', label: 'Profile' },
   ]
 
   return (
-    <header className="bg-white border-b border-gray-200 py-4 sticky top-0 z-50">
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-8 flex justify-between items-center">
         <Link href="/" className="flex items-center text-2xl font-bold text-black">
           {/* Desktop Logo */}
@@ -45,11 +44,15 @@ const Header = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="text-gray-700 font-medium hover:text-primary transition-colors"
+              className="text-gray-700 font-medium hover:text-primary transition-colors whitespace-nowrap"
             >
               {link.label}
             </Link>
           ))}
+          <button className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors whitespace-nowrap">
+            <LogIn className="w-4 h-4" />
+            Login
+          </button>
         </nav>
 
         {/* Mobile Hamburger Button */}
@@ -90,6 +93,10 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
+            <button className="mx-8 mt-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors">
+              <LogIn className="w-4 h-4" />
+              Login
+            </button>
           </nav>
         </div>
       )}
