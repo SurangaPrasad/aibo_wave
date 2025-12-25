@@ -4,6 +4,7 @@ import Mission from '@/components/home/Mission'
 import ThreePillars from '@/components/home/ThreePillars'
 import SilentEcho from '@/components/home/SilentEcho'
 import MemberBenefits from '@/components/home/MemberBenefits'
+import PricingTiers from '@/components/home/PricingTiers'
 import CallToAction from '@/components/home/CallToAction'
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
       <ThreePillars />
       <SilentEcho />
       <MemberBenefits />
+      <PricingTiers />
       <CallToAction />
     </>
   )

@@ -20,8 +20,8 @@ const Philosophy = () => {
         <h2 className="text-5xl font-bold mb-12 text-center text-gray-900">Our Philosophy</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {philosophies.map((item, index) => (
-            <div key={index} className="bg-gradient-to-br from-gray-50 to-gray-200 p-10 rounded-2xl border-l-4 border-primary transition-all hover:-translate-y-1 hover:shadow-2xl">
-              <h3 className="text-3xl font-semibold mb-4 text-primary">{item.title}</h3>
+            <div key={index} className="bg-gradient-to-br from-gray-50 to-gray-200 p-10 rounded-2xl border-l-4 border-accent transition-all hover:-translate-y-1 hover:shadow-2xl">
+              <h3 className="text-3xl font-semibold mb-4 text-accent">{item.title}</h3>
               <p className="text-lg leading-relaxed text-gray-600">{item.description}</p>
             </div>
           ))}

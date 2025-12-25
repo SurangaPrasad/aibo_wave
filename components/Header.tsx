@@ -14,8 +14,8 @@ const Header = () => {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
-    // { href: '/silent-echo', label: 'Silent Echo' },
     { href: '/societies', label: 'Societies' },
+    { href: '/apply', label: 'Apply' },
     { href: '/events', label: 'Events' },
   ]
 
@@ -50,7 +50,7 @@ const Header = () => {
               {link.label}
             </Link>
           ))}
-          <button className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors whitespace-nowrap">
+          <button className="bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors whitespace-nowrap">
             <LogIn className="w-4 h-4" />
             Login
           </button>
@@ -94,7 +94,7 @@ const Header = () => {
                 {link.label}
               </Link>
             ))}
-            <button className="mx-8 mt-2 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors">
+            <button className="mx-8 mt-2 bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors">
               <LogIn className="w-4 h-4" />
               Login
             </button>

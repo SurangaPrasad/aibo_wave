@@ -20,7 +20,7 @@ export default function SocietiesInfo() {
           
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
-              <div className="text-4xl font-bold text-primary mb-6">1</div>
+              <div className="text-4xl font-bold text-accent mb-6">1</div>
               <h3 className="text-2xl font-bold mb-4">Community Leadership</h3>
               <p className="text-muted-foreground leading-relaxed">
                 A respected cultural leader (Beacon) organizes and curates events for their diaspora community.
@@ -28,7 +28,7 @@ export default function SocietiesInfo() {
             </div>
 
             <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
-              <div className="text-4xl font-bold text-primary mb-6">2</div>
+              <div className="text-4xl font-bold text-accent mb-6">2</div>
               <h3 className="text-2xl font-bold mb-4">Curated Events</h3>
               <p className="text-muted-foreground leading-relaxed">
                 Regular gatherings (monthly, quarterly) featuring culturally-specific programming, artists, and wisdom keepers.
@@ -36,7 +36,7 @@ export default function SocietiesInfo() {
             </div>
 
             <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
-              <div className="text-4xl font-bold text-primary mb-6">3</div>
+              <div className="text-4xl font-bold text-accent mb-6">3</div>
               <h3 className="text-2xl font-bold mb-4">Community Growth</h3>
               <p className="text-muted-foreground leading-relaxed">
                 Members participate in local projects, mentorship, collaborative initiatives, and pan-European networking.
