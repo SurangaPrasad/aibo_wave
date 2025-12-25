@@ -196,7 +196,7 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
                 className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 appearance-none cursor-pointer"
               >
                 <option value="">Select your community</option>
-                <option value="sri-lankan">Sri Lankann</option>
+                <option value="sri-lankan">Sri Lankan</option>
                 <option value="indian">Indian</option>
                 <option value="pakistani">Pakistani </option>
                 <option value="bangladeshi">Bangladeshi</option>

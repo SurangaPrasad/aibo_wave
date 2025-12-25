@@ -52,7 +52,7 @@ export default function SilentEcho() {
                 <strong className="text-foreground">Date:</strong> January 2, 2026
               </div>
               <div>
-                <strong className="text-foreground">Location:</strong> Oulu, Finland
+                <strong className="text-foreground">Location:</strong> Cultural Centre, Oulu, Finland 
               </div>
               <div>
                 <strong className="text-foreground">Community:</strong> Sri Lankan Diaspora

@@ -2,7 +2,7 @@ import Head from 'next/head'
 import EventsHero from '@/components/events/EventsHero'
 import QuickFacts from '@/components/events/QuickFacts'
 import DetailedProgram from '@/components/events/DetailedProgram'
-import LogisticsPreparation from '@/components/events/LogisticsPreparation'
+// import LogisticsPreparation from '@/components/events/LogisticsPreparation'
 import StaffRoles from '@/components/events/StaffRoles'
 import ContingencyPlans from '@/components/events/ContingencyPlans'
 
@@ -16,7 +16,7 @@ export default function Events() {
       <EventsHero />
       <QuickFacts />
       <DetailedProgram />
-      <LogisticsPreparation />
+      {/* <LogisticsPreparation /> */}
       <StaffRoles />
       <ContingencyPlans />
     </>
