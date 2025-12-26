@@ -30,7 +30,7 @@ const initialRegisterState = {
 }
 
 const fieldClassName =
-  'w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50'
+  'w-full px-4 py-4 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 text-sm'
 
 export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthModalProps) {
   const { login, register } = useAuth()
@@ -81,13 +81,13 @@ export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthM
 
   return (
     <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center px-4">
-      <div className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-white">
+      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <header className="flex items-center justify-between px-8 py-6 border-b border-border bg-white">
           <div>
-            <p className="text-sm text-muted-foreground uppercase tracking-wide">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
               {mode === 'login' ? 'Member access' : 'Create account'}
             </p>
-            <h2 className="text-2xl font-bold">{modalTitle}</h2>
+            <h2 className="text-3xl font-extrabold leading-tight">{modalTitle}</h2>
           </div>
           <button
             onClick={onClose}
@@ -98,26 +98,28 @@ export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthM
           </button>
         </header>
 
-        <form onSubmit={handleSubmit} className="px-6 py-6 space-y-4 max-h-[80vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="px-8 py-8 space-y-6 max-h-[80vh] overflow-y-auto">
           {mode === 'signup' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold mb-1">First Name</label>
+                <label className="block text-sm font-medium mb-2">First Name</label>
                 <input
                   type="text"
                   name="first_name"
                   value={registerData.first_name}
                   onChange={handleInputChange}
+                  placeholder="First name"
                   className={fieldClassName}
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">Last Name</label>
+                <label className="block text-sm font-medium mb-2">Last Name</label>
                 <input
                   type="text"
                   name="last_name"
                   value={registerData.last_name}
                   onChange={handleInputChange}
+                  placeholder="Last name"
                   className={fieldClassName}
                 />
               </div>
@@ -125,38 +127,41 @@ export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthM
           )}
 
           <div>
-            <label className="block text-sm font-semibold mb-1">Email Address</label>
+            <label className="block text-sm font-medium mb-2">Email Address</label>
             <input
               type="email"
               name="email"
               value={mode === 'login' ? loginData.email : registerData.email}
               onChange={handleInputChange}
               required
+              placeholder="you@example.com"
               className={fieldClassName}
             />
           </div>
 
           {mode === 'signup' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-semibold mb-1">Username</label>
+                <label className="block text-sm font-medium mb-2">Username</label>
                 <input
                   type="text"
                   name="user_name"
                   value={registerData.user_name}
                   onChange={handleInputChange}
                   required
+                  placeholder="Choose a username"
                   className={fieldClassName}
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">Mobile Number</label>
+                <label className="block text-sm font-medium mb-2">Mobile Number</label>
                 <input
                   type="tel"
                   name="mobile_number"
                   value={registerData.mobile_number}
                   onChange={handleInputChange}
                   required
+                  placeholder="e.g. +358 40 123 4567"
                   className={fieldClassName}
                 />
               </div>
@@ -164,51 +169,55 @@ export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthM
           )}
 
           {mode === 'signup' && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className={mode === 'signup' ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : 'grid grid-cols-1 gap-4'}>
               <div>
-                <label className="block text-sm font-semibold mb-1">City</label>
+                <label className="block text-sm font-medium mb-2">City</label>
                 <input
                   type="text"
                   name="city"
                   value={registerData.city}
                   onChange={handleInputChange}
+                  placeholder="City"
                   className={fieldClassName}
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-1">Country</label>
+                <label className="block text-sm font-medium mb-2">Country</label>
                 <input
                   type="text"
                   name="country"
                   value={registerData.country}
                   onChange={handleInputChange}
+                  placeholder="Country"
                   className={fieldClassName}
                 />
               </div>
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className={mode === 'signup' ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : 'grid grid-cols-1 gap-4'}>
             <div>
-              <label className="block text-sm font-semibold mb-1">Password</label>
+              <label className="block text-sm font-medium mb-2">Password</label>
               <input
                 type="password"
                 name="password"
                 value={mode === 'login' ? loginData.password : registerData.password}
                 onChange={handleInputChange}
                 required
+                placeholder={mode === 'login' ? 'Your password' : 'Choose a strong password'}
                 className={fieldClassName}
               />
             </div>
             {mode === 'signup' && (
               <div>
-                <label className="block text-sm font-semibold mb-1">Confirm Password</label>
+                <label className="block text-sm font-medium mb-2">Confirm Password</label>
                 <input
                   type="password"
                   name="password_confirm"
                   value={registerData.password_confirm}
                   onChange={handleInputChange}
                   required
+                  placeholder="Repeat password"
                   className={fieldClassName}
                 />
               </div>
@@ -216,7 +225,7 @@ export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthM
           </div>
 
           {error && (
-            <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600">
+            <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-sm text-red-600">
               {error}
             </div>
           )}
@@ -225,7 +234,7 @@ export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthM
             type="submit"
             size="lg"
             disabled={isSubmitting}
-            className="w-full bg-accent hover:bg-accent/90 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-accent hover:bg-accent/90 text-lg disabled:opacity-50 disabled:cursor-not-allowed py-4"
           >
             {submitLabel}
           </Button>
