@@ -3,8 +3,8 @@ import EventsHero from '@/components/events/EventsHero'
 import QuickFacts from '@/components/events/QuickFacts'
 import DetailedProgram from '@/components/events/DetailedProgram'
 // import LogisticsPreparation from '@/components/events/LogisticsPreparation'
-import StaffRoles from '@/components/events/StaffRoles'
-import ContingencyPlans from '@/components/events/ContingencyPlans'
+// import StaffRoles from '@/components/events/StaffRoles'
+// import ContingencyPlans from '@/components/events/ContingencyPlans'
 
 export default function Events() {
   return (
@@ -17,8 +17,8 @@ export default function Events() {
       <QuickFacts />
       <DetailedProgram />
       {/* <LogisticsPreparation /> */}
-      <StaffRoles />
-      <ContingencyPlans />
+      {/* <StaffRoles /> */}
+      {/* <ContingencyPlans /> */}
     </>
   )
 }
