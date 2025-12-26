@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { toast } from 'react-toastify'
 
 interface ApplicationModalProps {
   isOpen: boolean
@@ -20,13 +21,57 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
     about: '',
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
-    // You can add API call here
-    alert('Application submitted successfully!')
-    onClose()
+    setIsSubmitting(true)
+    setSubmitError(null)
+
+    try {
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const response = await fetch(`${baseURL}/api/register/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        console.log('Application submitted successfully:', data)
+        toast.success('Application submitted successfully! We\'ll review your application and get in touch within 7-10 business days.', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        })
+        onClose()
+        // Reset form
+        setFormData({
+          interest: 'community-member',
+          fullName: '',
+          email: '',
+          phone: '',
+          country: '',
+          culturalCommunity: '',
+          about: '',
+        })
+      } else {
+        console.error('Submission failed:', data)
+        setSubmitError(data.error || 'Failed to submit application. Please try again.')
+      }
+    } catch (error) {
+      console.error('Network error:', error)
+      setSubmitError('Network error. Please check your connection and try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -221,13 +266,21 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
               />
             </div>
 
+            {/* Error Message */}
+            {submitError && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-600 text-sm">{submitError}</p>
+              </div>
+            )}
+
             {/* Submit Button */}
             <Button
               type="submit"
               size="lg"
-              className="w-full bg-accent hover:bg-accent/90 text-lg"
+              disabled={isSubmitting}
+              className="w-full bg-accent hover:bg-accent/90 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Submit Application
+              {isSubmitting ? 'Submitting...' : 'Submit Application'}
             </Button>
 
             {/* Footer Message */}

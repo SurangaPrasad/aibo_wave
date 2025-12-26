@@ -1,14 +1,33 @@
+
 'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { LogIn } from 'lucide-react'
+import { LogIn, LogOut, LayoutDashboard, UserPlus } from 'lucide-react'
+import AuthModal from '@/components/auth/AuthModal'
+import { useAuth } from '@/contexts/AuthContext'
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'signup' | null>(null)
+  const { isAuthenticated, logout } = useAuth()
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
+  }
+
+  const closeMenus = () => {
+    setIsMobileMenuOpen(false)
+  }
+
+  const openAuthModal = (mode: 'login' | 'signup') => {
+    setAuthModalMode(mode)
+    closeMenus()
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    closeMenus()
   }
 
   const navLinks = [
@@ -16,7 +35,6 @@ const Header = () => {
     { href: '/about', label: 'About' },
     { href: '/societies', label: 'Societies' },
     { href: '/apply', label: 'Apply' },
-    { href: '/events', label: 'Events' },
   ]
 
   return (
@@ -40,7 +58,7 @@ const Header = () => {
         </Link>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-8 items-center">
+        <nav className="hidden md:flex gap-4 items-center">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -50,10 +68,51 @@ const Header = () => {
               {link.label}
             </Link>
           ))}
-          <button className="bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors whitespace-nowrap">
-            <LogIn className="w-4 h-4" />
-            Login
-          </button>
+
+          {isAuthenticated && (
+            <Link
+              href="/events"
+              className="text-gray-700 font-medium hover:text-primary transition-colors whitespace-nowrap"
+            >
+              Events
+            </Link>
+          )}
+
+          {!isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => openAuthModal('login')}
+                className="bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors whitespace-nowrap"
+              >
+                <LogIn className="w-4 h-4" />
+                Login
+              </button>
+              <button
+                onClick={() => openAuthModal('signup')}
+                className="border border-accent text-accent hover:bg-accent/10 px-4 py-2 rounded-md flex items-center gap-2 transition-colors whitespace-nowrap"
+              >
+                <UserPlus className="w-4 h-4" />
+                Sign Up
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link
+                href="/dashboard"
+                className="bg-gray-900 text-white px-4 py-2 rounded-md flex items-center gap-2 transition-colors whitespace-nowrap"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2 transition-colors whitespace-nowrap"
+              >
+                <LogOut className="w-4 h-4" />
+                Logout
+              </button>
+            </div>
+          )}
         </nav>
 
         {/* Mobile Hamburger Button */}
@@ -89,18 +148,68 @@ const Header = () => {
                 key={link.href}
                 href={link.href}
                 className="px-8 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:text-primary transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={closeMenus}
               >
                 {link.label}
               </Link>
             ))}
-            <button className="mx-8 mt-2 bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors">
-              <LogIn className="w-4 h-4" />
-              Login
-            </button>
+
+            {isAuthenticated && (
+              <Link
+                href="/events"
+                className="px-8 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:text-primary transition-colors"
+                onClick={closeMenus}
+              >
+                Events
+              </Link>
+            )}
+
+            {!isAuthenticated ? (
+              <div className="flex flex-col gap-3 px-8 mt-3">
+                <button
+                  onClick={() => openAuthModal('login')}
+                  className="bg-accent hover:bg-accent/90 text-white px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors"
+                >
+                  <LogIn className="w-4 h-4" />
+                  Login
+                </button>
+                <button
+                  onClick={() => openAuthModal('signup')}
+                  className="border border-accent text-accent hover:bg-accent/10 px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors"
+                >
+                  <UserPlus className="w-4 h-4" />
+                  Sign Up
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 px-8 mt-3">
+                <Link
+                  href="/dashboard"
+                  className="bg-gray-900 text-white px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors"
+                  onClick={closeMenus}
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="border border-gray-300 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            )}
           </nav>
         </div>
       )}
+
+      <AuthModal
+        mode={authModalMode ?? 'login'}
+        isOpen={Boolean(authModalMode)}
+        onClose={() => setAuthModalMode(null)}
+        onSwitchMode={setAuthModalMode}
+      />
     </header>
   )
 }
