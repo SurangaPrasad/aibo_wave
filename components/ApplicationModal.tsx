@@ -30,7 +30,7 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
     setSubmitError(null)
 
     try {
-      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+      const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8001'
       const response = await fetch(`${baseURL}/api/register/`, {
         method: 'POST',
         headers: {
@@ -83,12 +83,17 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
 
   if (!isOpen) return null
 
+  const field = 'w-full px-4 py-4 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 text-sm'
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-border px-6 py-4 flex justify-between items-center">
-          <h2 className="text-3xl font-bold">Application Form</h2>
+        <div className="sticky top-0 bg-white border-b border-border px-8 py-6 flex justify-between items-center">
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Application</p>
+            <h2 className="text-3xl font-extrabold">Application Form</h2>
+          </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -99,69 +104,63 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
         </div>
 
         {/* Form Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-80px)] px-6 py-6">
+        <div className="overflow-y-auto max-h-[calc(90vh-80px)] px-8 py-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Interest Selection */}
             <div>
-              <h3 className="text-xl font-bold mb-4">I am interested in...</h3>
-              
-              <label className="flex items-start gap-3 mb-4 cursor-pointer">
-                <input
-                  type="radio"
-                  name="interest"
-                  value="community-member"
-                  checked={formData.interest === 'community-member'}
-                  onChange={handleChange}
-                  className="mt-1 w-5 h-5 accent-primary"
-                />
-                <div>
-                  <p className="font-bold">Community Member</p>
-                  <p className="text-sm text-muted-foreground">
-                    Join a local Silent Echo Society and participate in monthly events
-                  </p>
-                </div>
-              </label>
+              <h3 className="text-lg font-semibold mb-4">I am interested in...</h3>
 
-              <label className="flex items-start gap-3 mb-4 cursor-pointer">
-                <input
-                  type="radio"
-                  name="interest"
-                  value="beacon-member"
-                  checked={formData.interest === 'beacon-member'}
-                  onChange={handleChange}
-                  className="mt-1 w-5 h-5 accent-primary"
-                />
-                <div>
-                  <p className="font-bold">Beacon Member (Leader)</p>
-                  <p className="text-sm text-muted-foreground">
-                    Organize and lead a local Silent Echo Society in your city
-                  </p>
-                </div>
-              </label>
+              <div className="space-y-3">
+                <label className="flex items-start gap-4 p-4 rounded-lg border border-border hover:bg-gray-50 transition-colors cursor-pointer">
+                  <input
+                    type="radio"
+                    name="interest"
+                    value="community-member"
+                    checked={formData.interest === 'community-member'}
+                    onChange={handleChange}
+                    className="mt-1 w-6 h-6 accent-primary"
+                  />
+                  <div>
+                    <p className="font-semibold">Community Member</p>
+                    <p className="text-sm text-muted-foreground">Join a local Silent Echo Society and participate in monthly events</p>
+                  </div>
+                </label>
 
-              <label className="flex items-start gap-3 mb-4 cursor-pointer">
-                <input
-                  type="radio"
-                  name="interest"
-                  value="community-artist"
-                  checked={formData.interest === 'community-artist'}
-                  onChange={handleChange}
-                  className="mt-1 w-5 h-5 accent-primary"
-                />
-                <div>
-                  <p className="font-bold">Community Artist</p>
-                  <p className="text-sm text-muted-foreground">
-                    Perform, exhibit, or contribute your artistic talents to Silent Echo events
-                  </p>
-                </div>
-              </label>
+                <label className="flex items-start gap-4 p-4 rounded-lg border border-border hover:bg-gray-50 transition-colors cursor-pointer">
+                  <input
+                    type="radio"
+                    name="interest"
+                    value="beacon-member"
+                    checked={formData.interest === 'beacon-member'}
+                    onChange={handleChange}
+                    className="mt-1 w-6 h-6 accent-primary"
+                  />
+                  <div>
+                    <p className="font-semibold">Beacon Member (Leader)</p>
+                    <p className="text-sm text-muted-foreground">Organize and lead a local Silent Echo Society in your city</p>
+                  </div>
+                </label>
+
+                <label className="flex items-start gap-4 p-4 rounded-lg border border-border hover:bg-gray-50 transition-colors cursor-pointer">
+                  <input
+                    type="radio"
+                    name="interest"
+                    value="community-artist"
+                    checked={formData.interest === 'community-artist'}
+                    onChange={handleChange}
+                    className="mt-1 w-6 h-6 accent-primary"
+                  />
+                  <div>
+                    <p className="font-semibold">Community Artist</p>
+                    <p className="text-sm text-muted-foreground">Perform, exhibit, or contribute your artistic talents to Silent Echo events</p>
+                  </div>
+                </label>
+              </div>
             </div>
 
             {/* Full Name */}
             <div>
-              <label className="block font-bold mb-2">
-                Full Name <span className="text-red-500">*</span>
-              </label>
+              <label className="block font-semibold mb-2">Full Name <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="fullName"
@@ -169,50 +168,46 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
                 onChange={handleChange}
                 required
                 placeholder="Your full name"
-                className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50"
+                className={field}
               />
             </div>
 
             {/* Email Address */}
             <div>
-              <label className="block font-bold mb-2">
-                Email Address <span className="text-red-500">*</span>
-              </label>
+              <label className="block font-semibold mb-2">Email Address <span className="text-red-500">*</span></label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                placeholder="your@email.com"
-                className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50"
+                placeholder="you@example.com"
+                className={field}
               />
             </div>
 
             {/* Phone Number */}
             <div>
-              <label className="block font-bold mb-2">Phone Number</label>
+              <label className="block font-semibold mb-2">Phone Number</label>
               <input
                 type="tel"
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="+358 123 456 789"
-                className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50"
+                placeholder="e.g. +358 40 123 4567"
+                className={field}
               />
             </div>
 
             {/* Country */}
             <div>
-              <label className="block font-bold mb-2">
-                Country <span className="text-red-500">*</span>
-              </label>
+              <label className="block font-semibold mb-2">Country <span className="text-red-500">*</span></label>
               <select
                 name="country"
                 value={formData.country}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 appearance-none cursor-pointer"
+                className={field + ' appearance-none cursor-pointer'}
               >
                 <option value="">Select your country</option>
                 <option value="finland">Finland</option>
@@ -230,15 +225,13 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
 
             {/* Cultural Community */}
             <div>
-              <label className="block font-bold mb-2">
-                Cultural Community <span className="text-red-500">*</span>
-              </label>
+              <label className="block font-semibold mb-2">Cultural Community <span className="text-red-500">*</span></label>
               <select
                 name="culturalCommunity"
                 value={formData.culturalCommunity}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 appearance-none cursor-pointer"
+                className={field + ' appearance-none cursor-pointer'}
               >
                 <option value="">Select your community</option>
                 <option value="sri-lankan">Sri Lankan</option>
@@ -255,14 +248,14 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
 
             {/* Tell us about yourself */}
             <div>
-              <label className="block font-bold mb-2">Tell us about yourself</label>
+              <label className="block font-semibold mb-2">Tell us about yourself</label>
               <textarea
                 name="about"
                 value={formData.about}
                 onChange={handleChange}
-                rows={5}
+                rows={6}
                 placeholder="Share your story, interests, artistic background, or why you want to join Silent Echo..."
-                className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 resize-none"
+                className={field + ' resize-none'}
               />
             </div>
 
@@ -278,7 +271,7 @@ export default function ApplicationModal({ isOpen, onClose }: ApplicationModalPr
               type="submit"
               size="lg"
               disabled={isSubmitting}
-              className="w-full bg-accent hover:bg-accent/90 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-accent hover:bg-accent/90 text-lg disabled:opacity-50 disabled:cursor-not-allowed py-4"
             >
               {isSubmitting ? 'Submitting...' : 'Submit Application'}
             </Button>
