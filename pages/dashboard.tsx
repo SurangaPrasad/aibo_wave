@@ -1,58 +1,22 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/contexts/AuthContext'
-import { Button } from '@/components/ui/button'
+import LeftNavigation from '@/components/dashboard/LeftNavigation'
+import Profile from '@/components/dashboard/Profile'
+import Applications from '@/components/dashboard/Applications'
+import Overview from '@/components/dashboard/Overview'
+import Settings from '@/components/dashboard/Settings'
+import { Menu, X } from 'lucide-react'
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000'
-
-type ApplicationRecord = {
-  id: string
-  fullName?: string
-  full_name?: string
-  email?: string
-  interest?: string
-  country?: string
-  created_at?: string
-  [key: string]: unknown
-}
+type SectionType = 'profile' | 'applications' | 'overview' | 'settings'
 
 const DashboardPage = () => {
   const router = useRouter()
-  const { user, isAuthenticated, isLoading, accessToken } = useAuth()
-  const [applications, setApplications] = useState<ApplicationRecord[]>([])
-  const [appLoading, setAppLoading] = useState(false)
-  const [appError, setAppError] = useState<string | null>(null)
-
-  const fetchApplications = useCallback(async () => {
-    if (!accessToken || !user?.is_superuser) {
-      return
-    }
-
-    setAppLoading(true)
-    setAppError(null)
-
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/applications/`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-      const data = await response.json().catch(() => null)
-
-      if (!response.ok || !data) {
-        throw new Error(data?.error || 'Failed to fetch applications')
-      }
-
-      setApplications(data.applications || [])
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to load applications'
-      setAppError(message)
-    } finally {
-      setAppLoading(false)
-    }
-  }, [accessToken, user?.is_superuser])
+  const { user, isAuthenticated, isLoading } = useAuth()
+  const [activeSection, setActiveSection] = useState<SectionType>('overview')
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -60,16 +24,10 @@ const DashboardPage = () => {
     }
   }, [isLoading, isAuthenticated, router])
 
+  // Close mobile menu when section changes
   useEffect(() => {
-    if (user?.is_superuser) {
-      fetchApplications()
-    }
-  }, [user?.is_superuser, fetchApplications])
-
-  const welcomeMessage = useMemo(() => {
-    if (!user) return 'Creating your personalized space...'
-    return user.full_name || `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() || user.user_name
-  }, [user])
+    setIsMobileMenuOpen(false)
+  }, [activeSection])
 
   if (isLoading || (!isAuthenticated && isLoading)) {
     return (
@@ -83,84 +41,87 @@ const DashboardPage = () => {
     return null
   }
 
+  const renderSection = () => {
+    switch (activeSection) {
+      case 'profile':
+        return <Profile />
+      case 'applications':
+        return user.is_superuser ? <Applications /> : <Overview />
+      case 'overview':
+        return <Overview />
+      case 'settings':
+        return <Settings />
+      default:
+        return <Overview />
+    }
+  }
+
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 space-y-10">
-      <section className="bg-white border border-border rounded-2xl shadow-sm p-6 md:p-8">
-        <p className="text-sm uppercase tracking-wide text-muted-foreground">Welcome</p>
-        <h1 className="text-3xl font-bold mt-1">{welcomeMessage}</h1>
-        <p className="text-muted-foreground mt-4 max-w-2xl">
-          Manage your Silent Echo journey, track application activity, and stay connected with the community.
-        </p>
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 rounded-xl bg-accent/10 border border-accent/30">
-            <p className="text-xs uppercase text-muted-foreground">Status</p>
-            <p className="text-lg font-semibold">{user.is_superuser ? 'Superuser' : 'Member'}</p>
-          </div>
-          <div className="p-4 rounded-xl bg-gray-100 border border-gray-200">
-            <p className="text-xs uppercase text-muted-foreground">Email</p>
-            <p className="text-lg font-semibold break-words">{user.email}</p>
-          </div>
-          <div className="p-4 rounded-xl bg-gray-100 border border-gray-200">
-            <p className="text-xs uppercase text-muted-foreground">Mobile</p>
-            <p className="text-lg font-semibold">{user.mobile_number || 'Not provided'}</p>
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Desktop Navigation */}
+      <div className="hidden lg:block">
+        <LeftNavigation
+          activeSection={activeSection}
+          onSectionChange={(section) => setActiveSection(section as SectionType)}
+        />
+      </div>
+
+      {/* Mobile Navigation Overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setIsMobileMenuOpen(false)} />
+          <div className="absolute left-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-xl">
+            <LeftNavigation
+              activeSection={activeSection}
+              onSectionChange={(section) => setActiveSection(section as SectionType)}
+              isMobile={true}
+              onClose={() => setIsMobileMenuOpen(false)}
+            />
           </div>
         </div>
-      </section>
+      )}
 
-      {user.is_superuser && (
-        <section className="bg-white border border-border rounded-2xl shadow-sm p-6 md:p-8">
-          <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Mobile Header */}
+        <div className="lg:hidden bg-white border-b border-border px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="Open menu"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
             <div>
-              <h2 className="text-2xl font-bold">Recent Applications</h2>
-              <p className="text-muted-foreground text-sm">
-                Review the latest community applications submitted through the platform.
+              <h1 className="text-lg font-semibold text-gray-900">Dashboard</h1>
+              <p className="text-xs text-muted-foreground">
+                {user?.is_superuser ? 'Admin Panel' : 'Member Area'}
               </p>
             </div>
-            <Button variant="outline" onClick={fetchApplications} disabled={appLoading}>
-              {appLoading ? 'Refreshing...' : 'Refresh'}
-            </Button>
           </div>
-
-          {appError && (
-            <div className="mb-4 p-4 rounded-lg border border-red-200 bg-red-50 text-red-600 text-sm">
-              {appError}
+          <div className="flex items-center gap-2">
+            <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-sm">
+              {user?.profile_picture ? (
+                <img
+                  src={user.profile_picture}
+                  alt="Profile"
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                '👤'
+              )}
             </div>
-          )}
+          </div>
+        </div>
 
-          {!appLoading && applications.length === 0 && !appError && (
-            <p className="text-muted-foreground text-sm">No applications have been submitted yet.</p>
-          )}
-
-          {applications.length > 0 && (
-            <div className="overflow-x-auto">
-              <table className="min-w-full border border-border rounded-xl overflow-hidden">
-                <thead className="bg-gray-50 text-left text-sm text-muted-foreground">
-                  <tr>
-                    <th className="px-4 py-3 font-semibold">Applicant</th>
-                    <th className="px-4 py-3 font-semibold">Email</th>
-                    <th className="px-4 py-3 font-semibold">Interest</th>
-                    <th className="px-4 py-3 font-semibold">Country</th>
-                    <th className="px-4 py-3 font-semibold">Submitted</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm">
-                  {applications.map((app) => (
-                    <tr key={app.id} className="border-t border-border hover:bg-gray-50">
-                      <td className="px-4 py-3 font-medium">{app.fullName || app.full_name || '—'}</td>
-                      <td className="px-4 py-3">{app.email || '—'}</td>
-                      <td className="px-4 py-3 capitalize">{app.interest?.replace('-', ' ') || '—'}</td>
-                      <td className="px-4 py-3 capitalize">{app.country || '—'}</td>
-                      <td className="px-4 py-3 text-muted-foreground">
-                        {app.created_at ? new Date(app.created_at).toLocaleString() : '—'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </section>
-      )}
+        {/* Content Area */}
+        <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
+          <div className="max-w-6xl mx-auto">
+            {renderSection()}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }
