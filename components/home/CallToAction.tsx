@@ -1,16 +1,27 @@
 'use client'
 
-import { useState } from "react";
-import Link from "next/link";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import ApplicationModal from "@/components/ApplicationModal";
 
 export default function CallToAction() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('apply') === 'true') {
+        const element = document.getElementById('call-to-action');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    }
+  }, []);
+
   return (
     <>
-      <section className="bg-primary/5 py-20 md:py-32 border-t border-border">
+      <section id="call-to-action" className="bg-primary/5 py-20 md:py-32 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-8">Ready to Join the Wave?</h2>
           <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
@@ -24,11 +35,11 @@ export default function CallToAction() {
             >
               Apply Now
             </Button>
-            <Link href="/silent-echo">
-              <Button size="lg" variant="outline">
-                Explore Silent Echo
+            <a href="/Card - Echoes of the Heart.pdf" target="_blank" rel="noopener noreferrer">
+              <Button size="lg" variant="outline" className="text-primary w-full md:w-auto">
+                Echoes of the Heart
               </Button>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
