@@ -6,11 +6,12 @@ import { useAuth } from '@/contexts/AuthContext'
 import LeftNavigation from '@/components/dashboard/LeftNavigation'
 import Profile from '@/components/dashboard/Profile'
 import Applications from '@/components/dashboard/Applications'
+import Events from '@/components/dashboard/Events'
 import Overview from '@/components/dashboard/Overview'
 import Settings from '@/components/dashboard/Settings'
 import { Menu, X } from 'lucide-react'
 
-type SectionType = 'profile' | 'applications' | 'overview' | 'settings'
+type SectionType = 'profile' | 'applications' | 'events' | 'overview' | 'settings'
 
 const DashboardPage = () => {
   const router = useRouter()
@@ -47,6 +48,8 @@ const DashboardPage = () => {
         return <Profile />
       case 'applications':
         return user.is_superuser ? <Applications /> : <Overview />
+      case 'events':
+        return user.is_superuser ? <Events /> : <Overview />
       case 'overview':
         return <Overview />
       case 'settings':

@@ -25,6 +25,7 @@ const LeftNavigation = ({ activeSection, onSectionChange, isMobile = false, onCl
   const navigationItems: NavigationItem[] = [
     { id: 'profile', label: 'Profile', icon: '👤' },
     { id: 'applications', label: 'Applications', icon: '📋', adminOnly: true },
+    { id: 'events', label: 'Events', icon: '🎉', adminOnly: true },
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'settings', label: 'Settings', icon: '⚙️' },
   ]

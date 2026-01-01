@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import ApplicationModal from "@/components/ApplicationModal";
-
+import ApplicationModal from "@/components/ApplicationModal";import RegistrationModal from '@/components/RegistrationModal'
 export default function CallToAction() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -28,15 +28,23 @@ export default function CallToAction() {
             Whether you&apos;re a community member seeking cultural connection, an artist looking to monetize your work, or a leader ready to build a local Society—there&apos;s a place for you in the AIBO Wave ecosystem.
           </p>
           <div className="flex flex-col md:flex-row gap-4 justify-center">
-            <Button 
+            {/* <Button 
               size="lg" 
               className="bg-accent hover:bg-accent/90"
               onClick={() => setIsModalOpen(true)}
             >
               Apply Now
+            </Button> */}
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="text-black w-full md:w-auto bg-accent hover:bg-accent/90"
+              onClick={() => setIsRegistrationModalOpen(true)}
+            >
+              Register for Event
             </Button>
             <a href="/Card - Echoes of the Heart.pdf" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" variant="outline" className="text-primary w-full md:w-auto border border-black">
+              <Button size="lg" variant="outline" className="text-white w-full md:w-auto bg-black hover:bg-gray-800">
                 Echoes of the Heart
               </Button>
             </a>
@@ -45,6 +53,7 @@ export default function CallToAction() {
       </section>
 
       <ApplicationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <RegistrationModal isOpen={isRegistrationModalOpen} onClose={() => setIsRegistrationModalOpen(false)} />
     </>
   );
 }
