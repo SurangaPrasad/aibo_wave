@@ -36,7 +36,7 @@ export default function CallToAction() {
               Apply Now
             </Button>
             <a href="/Card - Echoes of the Heart.pdf" target="_blank" rel="noopener noreferrer">
-              <Button size="lg" variant="outline" className="text-primary w-full md:w-auto">
+              <Button size="lg" variant="outline" className="text-primary w-full md:w-auto border border-black">
                 Echoes of the Heart
               </Button>
             </a>
