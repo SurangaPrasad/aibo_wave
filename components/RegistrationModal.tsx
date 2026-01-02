@@ -66,6 +66,12 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
   
+  // Mobile popup states
+  const [showMobilePopup, setShowMobilePopup] = useState(false)
+  const [mobilePopupMessage, setMobilePopupMessage] = useState('')
+  const [mobilePopupType, setMobilePopupType] = useState<'success' | 'error'>('success')
+  const [isMobile, setIsMobile] = useState(false)
+  
   // Search states
   const [eventSearch, setEventSearch] = useState('')
   const [countrySearch, setCountrySearch] = useState('')
@@ -75,6 +81,18 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
   const [showCountryDropdown, setShowCountryDropdown] = useState(false)
   const [showCityDropdown, setShowCityDropdown] = useState(false)
   const [showCulturalCommunityDropdown, setShowCulturalCommunityDropdown] = useState(false)
+
+  // Detect mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Fetch events when modal opens
   useEffect(() => {
@@ -135,15 +153,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
 
       if (response.ok) {
         console.log('Registration successful:', data)
-        toast.success('Registration successful!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        })
-        onClose()
+        
         // Reset form
         setFormData({
           event_id: '',
@@ -158,13 +168,51 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
         setCountrySearch('')
         setCitySearch('')
         setCulturalCommunitySearch('')
+        
+        if (isMobile) {
+          // Show mobile popup (modal will close when user clicks OK)
+          setMobilePopupType('success')
+          setMobilePopupMessage('Registration successful! You\'ll receive a confirmation email shortly.')
+          setShowMobilePopup(true)
+        } else {
+          // Show toast for desktop and close immediately
+          toast.success('Registration successful!', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          })
+          onClose()
+        }
       } else {
         console.error('Registration failed:', data)
-        setSubmitError(data.error || 'Failed to register. Please try again.')
+        const errorMessage = data.error || 'Failed to register. Please try again.'
+        
+        if (isMobile) {
+          // Show mobile popup
+          setMobilePopupType('error')
+          setMobilePopupMessage(errorMessage)
+          setShowMobilePopup(true)
+        } else {
+          // Show error in form for desktop
+          setSubmitError(errorMessage)
+        }
       }
     } catch (error) {
       console.error('Network error:', error)
-      setSubmitError('Network error. Please check your connection and try again.')
+      const errorMessage = 'Network error. Please check your connection and try again.'
+      
+      if (isMobile) {
+        // Show mobile popup
+        setMobilePopupType('error')
+        setMobilePopupMessage(errorMessage)
+        setShowMobilePopup(true)
+      } else {
+        // Show error in form for desktop
+        setSubmitError(errorMessage)
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -246,7 +294,8 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
   const field = 'w-full px-4 py-4 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-gray-50 text-sm'
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+    <>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-border px-8 py-6 flex justify-between items-center">
@@ -515,5 +564,50 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
         </div>
       </div>
     </div>
+
+      {/* Mobile Success/Error Popup */}
+      {showMobilePopup && isMobile && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 animate-in fade-in zoom-in duration-200">
+            <div className="text-center">
+              {mobilePopupType === 'success' ? (
+                <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              ) : (
+                <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
+                  <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+              )}
+              
+              <h3 className={`text-xl font-bold mb-2 ${mobilePopupType === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                {mobilePopupType === 'success' ? 'Success!' : 'Error'}
+              </h3>
+              
+              <p className="text-gray-600 mb-6">
+                {mobilePopupMessage}
+              </p>
+              
+              <Button
+                onClick={() => {
+                  setShowMobilePopup(false)
+                  if (mobilePopupType === 'success') {
+                    // Close the registration modal on success
+                    onClose()
+                  }
+                }}
+                className={`w-full ${mobilePopupType === 'success' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}
+              >
+                OK
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
