@@ -135,7 +135,7 @@ export default function RegistrationModal({ isOpen, onClose }: RegistrationModal
 
       if (response.ok) {
         console.log('Registration successful:', data)
-        toast.success('Registration successful! You\'ll receive a confirmation email shortly.', {
+        toast.success('Registration successful!', {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
