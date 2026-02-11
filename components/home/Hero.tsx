@@ -25,7 +25,7 @@ const Hero = () => {
           </p>
           <div className="flex gap-4 mt-4">
             <button className="bg-accent hover:bg-accent-dark text-white px-8 py-4 rounded-lg font-semibold transition-all hover:-translate-y-0.5">
-              Explore Scilent Echo
+              Explore Silent Echo
             </button>
             <button className="bg-transparent hover:bg-white hover:text-gray-800 text-white border-2 border-white px-8 py-4 rounded-lg font-semibold transition-all">
               Become a Beacon
