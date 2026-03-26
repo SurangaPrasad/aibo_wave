@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { X, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react'
 
 const S3_BASE = 'https://aibo-wave.s3.eu-north-1.amazonaws.com'
-const S3_PREFIX = 'public/'
 const PAGE_SIZE = 12
 
 const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif']
@@ -14,9 +13,9 @@ function isImageKey(key: string) {
   return IMAGE_EXTENSIONS.includes(ext)
 }
 
-async function fetchGalleryImages(): Promise<string[]> {
+async function fetchGalleryImages(prefix: string): Promise<string[]> {
   const res = await fetch(
-    `${S3_BASE}/?list-type=2&prefix=${encodeURIComponent(S3_PREFIX)}`
+    `${S3_BASE}/?list-type=2&prefix=${encodeURIComponent(prefix)}`
   )
   if (!res.ok) throw new Error('Failed to fetch gallery listing')
   const text = await res.text()
@@ -68,7 +67,7 @@ function GalleryCard({
   )
 }
 
-export default function GalleryGrid() {
+export default function GalleryGrid({ prefix = 'public/' }: { prefix?: string }) {
   const [allImages, setAllImages] = useState<string[]>([])
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [initialLoading, setInitialLoading] = useState(true)
@@ -77,11 +76,15 @@ export default function GalleryGrid() {
   const sentinelRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
-    fetchGalleryImages()
+    setAllImages([])
+    setVisibleCount(PAGE_SIZE)
+    setInitialLoading(true)
+    setError(null)
+    fetchGalleryImages(prefix)
       .then(setAllImages)
       .catch((err) => setError(err.message))
       .finally(() => setInitialLoading(false))
-  }, [])
+  }, [prefix])
 
   // Infinite scroll: when sentinel enters viewport, reveal next PAGE_SIZE images
   useEffect(() => {
