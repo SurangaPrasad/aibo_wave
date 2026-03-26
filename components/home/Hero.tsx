@@ -1,16 +1,48 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Carousel from '@/components/Carousel'
 
-const carouselImages = [
+const S3_BASE = 'https://aibo-wave.s3.eu-north-1.amazonaws.com'
+const S3_PREFIX = 'carousel/'
+const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'avif']
+const FALLBACK_IMAGES = [
   '/gallery-1.jpeg',
   '/gallery-2.jpeg',
   '/gallery-3.jpeg',
   '/gallery-4.jpeg',
   '/gallery-5.jpeg',
-  '/gallery-6.jpeg',
-  '/gallery-7.jpeg',
 ]
 
+function isImageKey(key: string) {
+  const ext = key.split('.').pop()?.toLowerCase() ?? ''
+  return IMAGE_EXTENSIONS.includes(ext)
+}
+
+async function fetchFirst5(): Promise<string[]> {
+  const res = await fetch(
+    `${S3_BASE}/?list-type=2&prefix=${encodeURIComponent(S3_PREFIX)}&max-keys=20`
+  )
+  if (!res.ok) throw new Error('failed')
+  const text = await res.text()
+  const parser = new DOMParser()
+  const xml = parser.parseFromString(text, 'application/xml')
+  return Array.from(xml.querySelectorAll('Contents Key'))
+    .map((el) => el.textContent ?? '')
+    .filter(isImageKey)
+    .slice(0, 5)
+    .map((key) => `${S3_BASE}/${key}`)
+}
+
 const Hero = () => {
+  const [carouselImages, setCarouselImages] = useState<string[]>(FALLBACK_IMAGES)
+
+  useEffect(() => {
+    fetchFirst5()
+      .then((imgs) => { if (imgs.length > 0) setCarouselImages(imgs) })
+      .catch(() => { /* keep fallback */ })
+  }, [])
+
   return (
     <section className="bg-gradient-to-br from-wave-light to-wave-dark text-white py-24 px-8 min-h-[70vh] flex items-center">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
