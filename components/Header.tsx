@@ -57,7 +57,7 @@ const Header = () => {
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
     { href: '/societies', label: 'Societies' },
-    { href: '/apply', label: 'Apply' },
+    { href: '/gallery', label: 'Gallery' },
   ]
 
   return (
