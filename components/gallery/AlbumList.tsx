@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { MapPin, Calendar, Camera, ImageIcon, ChevronRight } from 'lucide-react'
+import { MapPin, Calendar, Camera, ImageIcon, ChevronRight, User } from 'lucide-react'
 import { ALBUMS, type Album } from './albums'
 
 const S3_BASE = 'https://aibo-wave.s3.eu-north-1.amazonaws.com'
@@ -43,7 +43,7 @@ function AlbumCard({ album, onOpen }: { album: Album; onOpen: (album: Album) => 
 
   return (
     <div
-      className="group cursor-pointer rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-white border border-gray-100"
+      className="group cursor-pointer rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-amber-50 border border-amber-200"
       onClick={() => onOpen(album)}
     >
       {/* Cover image */}
@@ -105,6 +105,12 @@ function AlbumCard({ album, onOpen }: { album: Album; onOpen: (album: Album) => 
             <MapPin className="w-4 h-4 mt-0.5 text-wave-orange shrink-0" />
             <span>{album.location}</span>
           </div>
+          {album.guest && (
+            <div className="flex items-start gap-2">
+              <User className="w-4 h-4 mt-0.5 text-wave-orange shrink-0" />
+              <span>{album.guest}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

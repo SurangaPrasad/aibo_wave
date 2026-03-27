@@ -5,15 +5,17 @@ export interface Album {
   photographer: string
   date: string
   location: string
+  guest?: string
 }
 
 export const ALBUMS: Album[] = [
   {
-    id: 'aibo-wave',
-    name: 'aibo-wave',
+    id: 'TheSocietyAtSilentEcho',
+    name: 'The Society At Silent Echo',
     s3Prefix: 'public/',
     photographer: 'Lumora Captures – Isuru Pramodya',
     date: 'January 2, 2026',
     location: 'Kulttuuritalo Valve, Oulu, Finland',
+    guest: 'Bhante M Anomadassi Thero',
   },
 ]
