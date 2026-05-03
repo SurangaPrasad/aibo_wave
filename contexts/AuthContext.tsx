@@ -32,6 +32,7 @@ type AuthUser = {
   is_superuser?: boolean
   is_staff?: boolean
   is_active?: boolean
+  role?: 'admin' | 'vendor' | 'customer'
 }
 
 type LoginPayload = {

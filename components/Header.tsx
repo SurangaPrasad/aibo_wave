@@ -4,15 +4,18 @@
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { LogIn, LogOut, LayoutDashboard, UserPlus } from 'lucide-react'
+import { LogIn, LogOut, LayoutDashboard, UserPlus, ShoppingCart, Store } from 'lucide-react'
 import AuthModal from '@/components/auth/AuthModal'
 import { useAuth } from '@/contexts/AuthContext'
+import { useCartStore } from '@/store/cartStore'
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [authModalMode, setAuthModalMode] = useState<'login' | 'signup' | null>(null)
   const { isAuthenticated, logout, user } = useAuth()
+  const totalCartItems = useCartStore((s) => s.getTotalItems())
   const router = useRouter()
+  const isVendor = user?.role === 'vendor'
 
   const isActive = (href: string) => {
     if (!router) return false
@@ -56,6 +59,7 @@ const Header = () => {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/about', label: 'About' },
+    { href: '/marketplace', label: 'Marketplace' },
     { href: '/societies', label: 'Societies' },
     { href: '/gallery', label: 'Gallery' },
   ]
@@ -101,6 +105,19 @@ const Header = () => {
             </Link>
           )}
 
+          <Link
+            href="/cart"
+            className="relative text-gray-700 font-medium hover:text-primary transition-colors whitespace-nowrap flex items-center gap-1.5"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            Cart
+            {totalCartItems > 0 && (
+              <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] px-1 rounded-full bg-wave-orange text-white text-[10px] leading-[18px] text-center font-semibold">
+                {totalCartItems > 99 ? '99+' : totalCartItems}
+              </span>
+            )}
+          </Link>
+
           {!isAuthenticated ? (
             <div className="flex items-center gap-3">
                 <button
@@ -137,6 +154,15 @@ const Header = () => {
 
                   {isProfileOpen && (
                     <div className="absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-md border overflow-hidden z-50">
+                      {isVendor && (
+                        <Link
+                          href="/seller"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          Seller Dashboard
+                        </Link>
+                      )}
                       <Link
                         href="/dashboard"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
@@ -200,14 +226,34 @@ const Header = () => {
             ))}
 
             {isAuthenticated && (
-              <Link
-                href="/events"
-                className="px-8 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:text-primary transition-colors"
-                onClick={closeMenus}
-              >
-                Events
-              </Link>
+              <>
+                <Link
+                  href="/events"
+                  className="px-8 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:text-primary transition-colors"
+                  onClick={closeMenus}
+                >
+                  Events
+                </Link>
+                {isVendor && (
+                  <Link
+                    href="/seller"
+                    className="px-8 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:text-primary transition-colors"
+                    onClick={closeMenus}
+                  >
+                    Seller Dashboard
+                  </Link>
+                )}
+              </>
             )}
+
+            <Link
+              href="/cart"
+              className="px-8 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:text-primary transition-colors flex items-center gap-2"
+              onClick={closeMenus}
+            >
+              <ShoppingCart className="w-4 h-4" />
+              Cart {totalCartItems > 0 ? `(${totalCartItems})` : ''}
+            </Link>
 
             {!isAuthenticated ? (
               <div className="flex flex-col gap-3 px-8 mt-3">
@@ -236,6 +282,16 @@ const Header = () => {
                   <LayoutDashboard className="w-4 h-4" />
                   Dashboard
                 </Link>
+                {isVendor && (
+                  <Link
+                    href="/seller"
+                    className="bg-wave-orange text-white px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors"
+                    onClick={closeMenus}
+                  >
+                    <Store className="w-4 h-4" />
+                    Seller Dashboard
+                  </Link>
+                )}
                 <button
                   onClick={handleLogout}
                   className="border border-gray-300 text-gray-700 px-4 py-2 rounded-md flex items-center gap-2 justify-center transition-colors"
