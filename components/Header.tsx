@@ -12,6 +12,7 @@ import { useCartStore } from '@/store/cartStore'
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [authModalMode, setAuthModalMode] = useState<'login' | 'signup' | null>(null)
+  const [hasMounted, setHasMounted] = useState(false)
   const { isAuthenticated, logout, user } = useAuth()
   const totalCartItems = useCartStore((s) => s.getTotalItems())
   const router = useRouter()
@@ -43,6 +44,10 @@ const Header = () => {
 
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const profileRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -111,7 +116,7 @@ const Header = () => {
           >
             <ShoppingCart className="w-4 h-4" />
             Cart
-            {totalCartItems > 0 && (
+            {hasMounted && totalCartItems > 0 && (
               <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] px-1 rounded-full bg-wave-orange text-white text-[10px] leading-[18px] text-center font-semibold">
                 {totalCartItems > 99 ? '99+' : totalCartItems}
               </span>

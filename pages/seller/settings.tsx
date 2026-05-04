@@ -4,10 +4,25 @@ import type { NextPage } from 'next'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import SellerLayout from '@/components/seller/SellerLayout'
+import VendorOnboardingStatus from '@/components/seller/VendorOnboardingStatus'
 import { Save } from 'lucide-react'
 import { toast } from 'react-toastify'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8001'
+
+const SELLER_COUNTRY_OPTIONS = [
+  'Canada',
+  'France',
+  'Germany',
+  'Ghana',
+  'Ireland',
+  'Kenya',
+  'Nigeria',
+  'South Africa',
+  'Uganda',
+  'United Kingdom',
+  'United States',
+]
 
 const SellerSettingsPage: NextPage = () => {
   const { user, accessToken, refreshProfile } = useAuth()
@@ -35,7 +50,7 @@ const SellerSettingsPage: NextPage = () => {
     }
   }, [user])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
   }
@@ -69,6 +84,21 @@ const SellerSettingsPage: NextPage = () => {
   return (
     <SellerLayout title="Settings">
       <div className="max-w-2xl">
+        <VendorOnboardingStatus />
+
+        <div className="mb-6 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+          <h2 className="text-sm font-semibold text-blue-900">Seller onboarding guide</h2>
+          <p className="mt-2 text-sm text-blue-800">
+            Before starting Stripe onboarding, make sure your seller profile is complete. Stripe needs your country and will enable both card payments and payout transfers on your connected seller account.
+          </p>
+          <ol className="mt-3 list-decimal space-y-1 pl-5 text-xs text-blue-800">
+            <li>Select your country from the dropdown below.</li>
+            <li>Save your seller profile changes.</li>
+            <li>Return to the Stripe section above and click Complete Onboarding.</li>
+            <li>Finish Stripe's hosted onboarding steps to activate payments and payouts.</li>
+          </ol>
+        </div>
+
         <p className="text-sm text-gray-500 mb-6">Update your public seller profile information.</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
@@ -141,13 +171,22 @@ const SellerSettingsPage: NextPage = () => {
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1.5">Country</label>
-              <input
-                type="text"
+              <select
                 name="country"
                 value={form.country}
                 onChange={handleChange}
-                className={fieldClass}
-              />
+                className={`${fieldClass} appearance-none cursor-pointer`}
+              >
+                <option value="">Select your country</option>
+                {SELLER_COUNTRY_OPTIONS.map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-1.5 text-xs text-gray-500">
+                Choose the country where your seller payout account will be registered with Stripe.
+              </p>
             </div>
           </div>
 

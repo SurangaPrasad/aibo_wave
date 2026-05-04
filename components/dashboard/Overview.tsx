@@ -1,9 +1,49 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8001'
+
+type CustomerOrder = {
+  id: string
+  total_amount: number
+  status: string
+  payment_status: string
+  created_at: string
+}
+
 const Overview = () => {
-  const { user } = useAuth()
+  const { user, accessToken, isAuthenticated } = useAuth()
+  const [orders, setOrders] = useState<CustomerOrder[]>([])
+
+  useEffect(() => {
+    if (!isAuthenticated || !accessToken) {
+      setOrders([])
+      return
+    }
+
+    const loadOrders = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/marketplace/customer/orders/`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        })
+
+        if (!res.ok) {
+          return
+        }
+
+        const payload = await res.json().catch(() => null)
+        setOrders(Array.isArray(payload?.data) ? payload.data.slice(0, 5) : [])
+      } catch {
+        setOrders([])
+      }
+    }
+
+    loadOrders()
+  }, [accessToken, isAuthenticated])
 
   return (
     <div className="space-y-6">
@@ -92,6 +132,30 @@ const Overview = () => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="bg-white border border-border rounded-2xl shadow-sm p-6 md:p-8">
+        <h3 className="text-xl font-bold mb-4">Recent Orders</h3>
+        {orders.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No orders yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {orders.map((order) => (
+              <div key={order.id} className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Order #{order.id.slice(-8).toUpperCase()}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {new Date(order.created_at).toLocaleDateString()} • {order.payment_status}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-semibold text-wave-dark">${Number(order.total_amount).toFixed(2)}</p>
+                  <p className="text-xs capitalize text-muted-foreground">{order.status}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

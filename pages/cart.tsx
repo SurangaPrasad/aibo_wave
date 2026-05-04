@@ -4,6 +4,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Minus, Plus, Trash2, ShoppingCart } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
+import { useAuth } from '@/contexts/AuthContext'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
 const CartPage: NextPage = () => {
   const items = useCartStore((s) => s.items)
@@ -12,9 +15,85 @@ const CartPage: NextPage = () => {
   const clearCart = useCartStore((s) => s.clearCart)
   const getTotalItems = useCartStore((s) => s.getTotalItems)
   const getTotalPrice = useCartStore((s) => s.getTotalPrice)
+  const { accessToken, isAuthenticated } = useAuth()
+  const router = useRouter()
 
   const totalItems = getTotalItems()
   const totalPrice = getTotalPrice()
+
+  const [isCheckingOut, setIsCheckingOut] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
+  const [checkoutNotice, setCheckoutNotice] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!router.isReady) {
+      return
+    }
+
+    const checkoutStatus = typeof router.query.checkout === 'string' ? router.query.checkout : null
+    if (!checkoutStatus) {
+      return
+    }
+
+    if (checkoutStatus === 'success') {
+      clearCart()
+      setCheckoutNotice('Payment completed. Your cart has been cleared.')
+      setCheckoutError(null)
+    } else if (checkoutStatus === 'cancel') {
+      setCheckoutNotice('Checkout was canceled. Your cart items are still saved.')
+    }
+
+    router.replace('/cart', undefined, { shallow: true })
+  }, [clearCart, router])
+
+  const handleCheckout = async () => {
+    if (items.length === 0) {
+      setCheckoutError('Your cart is empty.')
+      return
+    }
+
+    if (!isAuthenticated || !accessToken) {
+      setCheckoutError('Please sign in before checking out.')
+      return
+    }
+
+    setIsCheckingOut(true)
+    setCheckoutError(null)
+
+    try {
+      const productIds = items.flatMap((item) => Array(item.quantity).fill(item.product_id))
+      const backendUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000'
+
+      const response = await fetch(`${backendUrl}/marketplace/checkout/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ product_ids: productIds }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.message || `Checkout failed with status ${response.status}`)
+      }
+
+      const data = await response.json()
+      const sessionUrl = data.session_url
+
+      if (sessionUrl) {
+        window.location.href = sessionUrl
+      } else {
+        throw new Error('No checkout session returned from server.')
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Checkout failed. Please try again.'
+      setCheckoutError(message)
+      console.error('Checkout error:', error)
+    } finally {
+      setIsCheckingOut(false)
+    }
+  }
 
   return (
     <>
@@ -124,12 +203,28 @@ const CartPage: NextPage = () => {
                 </div>
 
                 <button
-                  disabled
-                  className="w-full mt-5 px-4 py-2.5 rounded-xl bg-gray-200 text-gray-500 text-sm font-medium cursor-not-allowed"
-                  title="Checkout flow coming soon"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut || items.length === 0}
+                  className={`w-full mt-5 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${
+                    isCheckingOut || items.length === 0
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      : 'bg-wave-orange text-white hover:bg-amber-600 cursor-pointer'
+                  }`}
                 >
-                  Checkout (Coming soon)
+                  {isCheckingOut ? 'Processing...' : 'Proceed to Checkout'}
                 </button>
+
+                {checkoutError && (
+                  <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-xs text-red-600">{checkoutError}</p>
+                  </div>
+                )}
+
+                {checkoutNotice && (
+                  <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="text-xs text-green-700">{checkoutNotice}</p>
+                  </div>
+                )}
 
                 <Link
                   href="/marketplace"

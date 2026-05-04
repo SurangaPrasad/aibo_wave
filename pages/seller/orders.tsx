@@ -54,7 +54,7 @@ const SellerOrdersPage: NextPage = () => {
     setError(null)
 
     try {
-      const res = await fetch(`${API_BASE}/marketplace/vendor/dashboard/`, {
+      const res = await fetch(`${API_BASE}/marketplace/vendor/orders/`, {
         headers: { Authorization: `Bearer ${accessToken}` },
         signal: controller.signal,
       })
@@ -69,8 +69,7 @@ const SellerOrdersPage: NextPage = () => {
 
       if (requestId !== requestIdRef.current) return
 
-      // Dashboard returns aggregated data; sub_orders may be nested
-      setOrders(data.data?.recent_orders ?? [])
+      setOrders(Array.isArray(data.data) ? data.data : [])
       setError(null)
     } catch (err) {
       if (controller.signal.aborted || requestId !== requestIdRef.current) return

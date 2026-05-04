@@ -2,6 +2,13 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import type { CartItem, VendorCart } from '@/types/marketplace'
 
+const GUEST_CART_OWNER = 'guest'
+
+const normalizeCartOwner = (ownerId?: string | null) => ownerId?.trim() || GUEST_CART_OWNER
+
+const getActiveItems = (state: Pick<CartState, 'items' | 'cartsByOwner' | 'activeOwnerId'>) =>
+  state.cartsByOwner?.[state.activeOwnerId] ?? state.items ?? []
+
 /**
  * Cart store with per-vendor grouping.
  *
@@ -11,6 +18,9 @@ import type { CartItem, VendorCart } from '@/types/marketplace'
 
 type CartState = {
   items: CartItem[]
+  cartsByOwner: Record<string, CartItem[]>
+  activeOwnerId: string
+  setActiveOwner: (ownerId?: string | null) => void
 
   // ── Derived helpers ─────────────────────────────────────────────────────────
   /** Items grouped by vendor_id, with per-vendor subtotals attached. */
@@ -45,6 +55,22 @@ export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
+      cartsByOwner: {
+        [GUEST_CART_OWNER]: [],
+      },
+      activeOwnerId: GUEST_CART_OWNER,
+
+      setActiveOwner: (ownerId) =>
+        set((state) => {
+          const nextOwnerId = normalizeCartOwner(ownerId)
+          const cartsByOwner = state.cartsByOwner ?? { [GUEST_CART_OWNER]: state.items ?? [] }
+
+          return {
+            activeOwnerId: nextOwnerId,
+            cartsByOwner,
+            items: cartsByOwner[nextOwnerId] ?? [],
+          }
+        }),
 
       // ── Derived ─────────────────────────────────────────────────────────────
 
@@ -78,43 +104,126 @@ export const useCartStore = create<CartState>()(
 
       addItem: (incoming) =>
         set((state) => {
-          const existing = state.items.find((i) => i.product_id === incoming.product_id)
-          if (existing) {
-            return {
-              items: state.items.map((i) =>
+          const activeOwnerId = state.activeOwnerId ?? GUEST_CART_OWNER
+          const currentItems = getActiveItems(state)
+          const existing = currentItems.find((i) => i.product_id === incoming.product_id)
+
+          const nextItems = existing
+            ? currentItems.map((i) =>
                 i.product_id === incoming.product_id
                   ? { ...i, quantity: i.quantity + incoming.quantity }
                   : i
-              ),
+              )
+            : [...currentItems, incoming]
+
+          if (existing) {
+            return {
+              items: nextItems,
+              cartsByOwner: {
+                ...(state.cartsByOwner ?? {}),
+                [activeOwnerId]: nextItems,
+              },
             }
           }
-          return { items: [...state.items, incoming] }
+          return {
+            items: nextItems,
+            cartsByOwner: {
+              ...(state.cartsByOwner ?? {}),
+              [activeOwnerId]: nextItems,
+            },
+          }
         }),
 
       removeItem: (product_id) =>
-        set((state) => ({
-          items: state.items.filter((i) => i.product_id !== product_id),
-        })),
+        set((state) => {
+          const activeOwnerId = state.activeOwnerId ?? GUEST_CART_OWNER
+          const nextItems = getActiveItems(state).filter((i) => i.product_id !== product_id)
+
+          return {
+            items: nextItems,
+            cartsByOwner: {
+              ...(state.cartsByOwner ?? {}),
+              [activeOwnerId]: nextItems,
+            },
+          }
+        }),
 
       updateQuantity: (product_id, quantity) =>
         set((state) => {
+          const activeOwnerId = state.activeOwnerId ?? GUEST_CART_OWNER
+          const currentItems = getActiveItems(state)
           if (quantity <= 0) {
-            return { items: state.items.filter((i) => i.product_id !== product_id) }
+            const nextItems = currentItems.filter((i) => i.product_id !== product_id)
+            return {
+              items: nextItems,
+              cartsByOwner: {
+                ...(state.cartsByOwner ?? {}),
+                [activeOwnerId]: nextItems,
+              },
+            }
           }
+          const nextItems = currentItems.map((i) =>
+            i.product_id === product_id ? { ...i, quantity } : i
+          )
           return {
-            items: state.items.map((i) =>
-              i.product_id === product_id ? { ...i, quantity } : i
-            ),
+            items: nextItems,
+            cartsByOwner: {
+              ...(state.cartsByOwner ?? {}),
+              [activeOwnerId]: nextItems,
+            },
           }
         }),
 
       clearVendorCart: (vendor_id) =>
-        set((state) => ({
-          items: state.items.filter((i) => i.vendor_id !== vendor_id),
-        })),
+        set((state) => {
+          const activeOwnerId = state.activeOwnerId ?? GUEST_CART_OWNER
+          const nextItems = getActiveItems(state).filter((i) => i.vendor_id !== vendor_id)
 
-      clearCart: () => set({ items: [] }),
+          return {
+            items: nextItems,
+            cartsByOwner: {
+              ...(state.cartsByOwner ?? {}),
+              [activeOwnerId]: nextItems,
+            },
+          }
+        }),
+
+      clearCart: () =>
+        set((state) => {
+          const activeOwnerId = state.activeOwnerId ?? GUEST_CART_OWNER
+          return {
+            items: [],
+            cartsByOwner: {
+              ...(state.cartsByOwner ?? {}),
+              [activeOwnerId]: [],
+            },
+          }
+        }),
     }),
-    { name: 'aibo-cart' }
+    {
+      name: 'aibo-cart',
+      version: 2,
+      migrate: (persistedState: unknown, version) => {
+        const state = (persistedState ?? {}) as Partial<CartState>
+        if (version < 2) {
+          const legacyItems = Array.isArray(state.items) ? state.items : []
+          return {
+            ...state,
+            items: legacyItems,
+            cartsByOwner: {
+              [GUEST_CART_OWNER]: legacyItems,
+            },
+            activeOwnerId: GUEST_CART_OWNER,
+          }
+        }
+
+        return {
+          ...state,
+          items: Array.isArray(state.items) ? state.items : [],
+          cartsByOwner: state.cartsByOwner ?? { [GUEST_CART_OWNER]: Array.isArray(state.items) ? state.items : [] },
+          activeOwnerId: state.activeOwnerId ?? GUEST_CART_OWNER,
+        }
+      },
+    }
   )
 )
