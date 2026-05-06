@@ -157,7 +157,7 @@ function BusinessDetailsStep({
         <p className="font-medium mb-1">What happens next?</p>
         <ul className="list-disc pl-4 space-y-1 text-xs">
           <li>Your application will be reviewed within 1–2 business days.</li>
-          <li>You'll receive an email once your seller account is approved.</li>
+          <li>You&apos;ll receive an email once your seller account is approved.</li>
           <li>A 10% platform commission applies to all sales.</li>
           <li>Payouts are available once your balance reaches $50.</li>
         </ul>
@@ -281,7 +281,7 @@ export default function BecomeSellerPage() {
           </div>
           <h2 className="text-xl font-bold text-wave-dark mb-2">Application Submitted!</h2>
           <p className="text-gray-500 text-sm mb-6">
-            We'll review your application and notify you via email within 1–2 business days.
+            We&apos;ll review your application and notify you via email within 1–2 business days.
           </p>
           <button
             onClick={() => router.push('/')}

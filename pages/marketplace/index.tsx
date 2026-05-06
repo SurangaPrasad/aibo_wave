@@ -71,7 +71,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) =
 
     // Derive unique categories from the current result set for the filter panel.
     // A dedicated /categories/ endpoint would be better for large catalogues.
-    const categories = [...new Set(products.map((p) => p.category).filter(Boolean))]
+    const categories = products.reduce<string[]>((acc, product) => {
+      const categoryValue = product.category
+      if (categoryValue && acc.indexOf(categoryValue) === -1) {
+        acc.push(categoryValue)
+      }
+      return acc
+    }, [])
 
     return {
       props: {

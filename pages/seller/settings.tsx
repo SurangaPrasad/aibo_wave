@@ -95,7 +95,7 @@ const SellerSettingsPage: NextPage = () => {
             <li>Select your country from the dropdown below.</li>
             <li>Save your seller profile changes.</li>
             <li>Return to the Stripe section above and click Complete Onboarding.</li>
-            <li>Finish Stripe's hosted onboarding steps to activate payments and payouts.</li>
+            <li>Finish Stripe&apos;s hosted onboarding steps to activate payments and payouts.</li>
           </ol>
         </div>
 

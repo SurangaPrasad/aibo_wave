@@ -1,4 +1,5 @@
 import type { NextPage } from 'next'
+import Link from 'next/link'
 import SellerLayout from '@/components/seller/SellerLayout'
 import { useAuth } from '@/contexts/AuthContext'
 import { Package, ShoppingBag, Wallet, TrendingUp } from 'lucide-react'
@@ -36,7 +37,7 @@ const SellerOverviewPage: NextPage = () => {
         <h2 className="text-xl font-bold text-wave-dark">
           Welcome back, {user?.first_name || user?.user_name} 👋
         </h2>
-        <p className="text-gray-500 text-sm mt-1">Here's a snapshot of your store today.</p>
+        <p className="text-gray-500 text-sm mt-1">Here&apos;s a snapshot of your store today.</p>
       </div>
 
       {/* Stat cards */}
@@ -51,24 +52,24 @@ const SellerOverviewPage: NextPage = () => {
       <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
         <h3 className="text-sm font-semibold text-gray-700 mb-4">Quick Actions</h3>
         <div className="flex flex-wrap gap-3">
-          <a
+          <Link
             href="/seller/products"
             className="px-4 py-2 bg-wave-orange text-white text-sm font-medium rounded-xl hover:bg-amber-600 transition-colors"
           >
             + Add Product
-          </a>
-          <a
+          </Link>
+          <Link
             href="/seller/orders"
             className="px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors"
           >
             View Orders
-          </a>
-          <a
+          </Link>
+          <Link
             href="/seller/withdrawals"
             className="px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors"
           >
             Withdraw Earnings
-          </a>
+          </Link>
         </div>
       </div>
     </SellerLayout>

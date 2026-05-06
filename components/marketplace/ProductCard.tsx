@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { ShoppingCart, Package } from 'lucide-react'
 import { toast } from 'react-toastify'
 import type { Product } from '@/types/marketplace'
@@ -35,19 +36,21 @@ export default function ProductCard({ product }: Props) {
     <article className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
       {/* Image */}
       <div className="relative aspect-square w-full bg-gray-50 overflow-hidden">
-        {primaryImage ? (
-          <Image
-            src={primaryImage}
-            alt={product.name}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-gray-300">
-            <Package className="w-12 h-12" />
-          </div>
-        )}
+        <Link href={`/marketplace/${product.id}`} className="absolute inset-0" aria-label={`View ${product.name}`}>
+          {primaryImage ? (
+            <Image
+              src={primaryImage}
+              alt={product.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-gray-300">
+              <Package className="w-12 h-12" />
+            </div>
+          )}
+        </Link>
 
         {outOfStock && (
           <span className="absolute top-2 left-2 bg-red-100 text-red-700 text-xs font-semibold px-2 py-1 rounded-full">
@@ -70,9 +73,9 @@ export default function ProductCard({ product }: Props) {
           </span>
         )}
 
-        <h3 className="mt-1 text-sm font-semibold text-wave-dark line-clamp-2 flex-1">
+        <Link href={`/marketplace/${product.id}`} className="mt-1 text-sm font-semibold text-wave-dark line-clamp-2 flex-1 hover:text-wave-orange transition-colors">
           {product.name}
-        </h3>
+        </Link>
 
         {product.vendor_name && (
           <p className="text-xs text-gray-400 mt-0.5">by {product.vendor_name}</p>
@@ -87,14 +90,22 @@ export default function ProductCard({ product }: Props) {
             ${Number(product.price).toFixed(2)}
           </span>
 
-          <button
-            onClick={handleAddToCart}
-            disabled={outOfStock}
-            className="flex items-center gap-1.5 bg-wave-orange hover:bg-amber-600 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-sm font-medium px-3 py-2 rounded-xl transition-colors"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            {inCart ? 'Add more' : 'Add'}
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/marketplace/${product.id}`}
+              className="text-xs font-medium text-gray-600 hover:text-wave-orange transition-colors"
+            >
+              Details
+            </Link>
+            <button
+              onClick={handleAddToCart}
+              disabled={outOfStock}
+              className="flex items-center gap-1.5 bg-wave-orange hover:bg-amber-600 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white text-sm font-medium px-3 py-2 rounded-xl transition-colors"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              {inCart ? 'Add more' : 'Add'}
+            </button>
+          </div>
         </div>
       </div>
     </article>
