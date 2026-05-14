@@ -10,6 +10,7 @@ import {
   ReactNode,
 } from 'react'
 import { toast } from 'react-toastify'
+import { useCartStore } from '@/store/cartStore'
 
 const ACCESS_TOKEN_KEY = 'aibo_access_token'
 const REFRESH_TOKEN_KEY = 'aibo_refresh_token'
@@ -32,6 +33,7 @@ type AuthUser = {
   is_superuser?: boolean
   is_staff?: boolean
   is_active?: boolean
+  role?: 'admin' | 'vendor' | 'customer'
 }
 
 type LoginPayload = {
@@ -70,6 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const [refreshToken, setRefreshToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const setCartActiveOwner = useCartStore((state) => state.setActiveOwner)
 
   const persistSession = useCallback((userData: AuthUser, access: string, refresh: string) => {
     setUser(userData)
@@ -132,6 +135,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setIsLoading(false)
     }
   }, [fetchProfile])
+
+  useEffect(() => {
+    if (isLoading) {
+      return
+    }
+
+    setCartActiveOwner(user?.id ?? null)
+  }, [isLoading, setCartActiveOwner, user?.id])
 
   const handleAuthResponse = useCallback(
     async (response: Response) => {

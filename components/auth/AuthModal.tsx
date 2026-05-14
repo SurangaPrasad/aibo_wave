@@ -80,8 +80,9 @@ export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthM
   const submitLabel = isSubmitting ? 'Please wait...' : mode === 'login' ? 'Login' : 'Sign Up'
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center px-4">
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm">
+      <div className="flex min-h-full items-center justify-center overflow-y-auto p-4 sm:p-6">
+        <div className="relative w-full max-w-2xl max-h-[90vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col my-4">
         <header className="flex items-center justify-between px-8 py-6 border-b border-border bg-white">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
@@ -98,7 +99,7 @@ export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthM
           </button>
         </header>
 
-        <form onSubmit={handleSubmit} className="px-8 py-8 space-y-6 max-h-[80vh] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="px-8 py-8 space-y-6 overflow-y-auto flex-1">
           {mode === 'signup' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -250,6 +251,7 @@ export default function AuthModal({ mode, isOpen, onClose, onSwitchMode }: AuthM
             </button>
           </p>
         </form>
+        </div>
       </div>
     </div>
   )

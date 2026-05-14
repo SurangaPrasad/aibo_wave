@@ -67,7 +67,7 @@ function GalleryCard({
   )
 }
 
-export default function GalleryGrid({ prefix = 'public/' }: { prefix?: string }) {
+export default function GalleryGrid({ prefix = 'public/gallery' }: { prefix?: string }) {
   const [allImages, setAllImages] = useState<string[]>([])
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
   const [initialLoading, setInitialLoading] = useState(true)
